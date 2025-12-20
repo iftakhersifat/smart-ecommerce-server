@@ -26,6 +26,12 @@ async function run() {
     await client.connect();
     const productsCollection = client.db('smart-ecommerce').collection('products')
 
+    // GET all products
+    app.get('/products', async (req, res) => {
+      const products = await productsCollection.find({}).toArray();
+      res.send(products);
+  });
+
 
 
 
