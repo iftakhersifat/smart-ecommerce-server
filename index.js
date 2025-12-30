@@ -57,11 +57,27 @@ async function run() {
       res.send(result);
     });
 
+    // 2. POST Order: Notun order create kora (Requirement #5 & #6)
+    app.post('/orders', async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.send(result);
+    });
 
+    // 3. GET Specific User's Orders: User Dashboard-er jonno (Requirement #9)
+    app.get('/my-orders', async (req, res) => {
+      const email = req.query.email;
+      const query = { customerEmail: email };
+      const result = await ordersCollection.find(query).toArray();
+      res.send(result);
+    });
+    // Get All Orders (Admin er jonno)
+    app.get('/all-orders', async (req, res) => {
+      const result = await ordersCollection.find().toArray();
+      res.send(result);
+    });
 
-
-
-
+   
 
 
     // Send a ping to confirm a successful connection
