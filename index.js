@@ -25,20 +25,31 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const productsCollection = client.db('smart-ecommerce').collection('products')
+    const ordersCollection = client.db('smart-ecommerce').collection('orders');
+    const usersCollection = client.db('smart-ecommerce').collection('users');
 
-    // GET all products
+    // get all products
     app.get('/products', async (req, res) => {
-      const products = await productsCollection.find({}).toArray();
-      res.send(products);
+      const result = await productsCollection.find().toArray();
+      res.send(result);
     });
 
-    // get specific products by ID
+    // get products by specific id
     app.get('/products/:id', async (req, res) => {
-    const id = req.params.id;
-    const query = { _id: new ObjectId(id) };
-    const result = await productsCollection.findOne(query);
-    res.send(result);
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productsCollection.findOne(query);
+      res.send(result);
     });
+
+    // delete specific product
+    app.delete('/products/:id', async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await productsCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    
 
 
 
