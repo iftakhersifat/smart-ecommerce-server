@@ -31,6 +31,7 @@ async function run() {
         const reviewsCollection = db.collection('reviews');
         const wishlistCollection = db.collection('wishlist');
         const compareCollection = db.collection('compare');
+        const messagesCollection = db.collection("messages");
 
         // get all products
         app.get('/products', async (req, res) => {
@@ -278,6 +279,36 @@ async function run() {
             const query = { _id: new ObjectId(req.params.id) };
             const result = await compareCollection.deleteOne(query);
             res.send(result);
+        });
+
+        // for message
+        // post method
+        app.post('/messages', async (req, res) => {
+        try {
+        const message = req.body;
+        const messageWithDate = {
+            ...message,
+            submittedAt: new Date()
+        };
+        const result = await messagesCollection.insertOne(messageWithDate);
+        res.send(result);
+        } catch (error) {
+        console.error("Error saving message:", error);
+        res.status(500).send({ message: "Failed to save message" });}
+        });
+
+        // get message
+        app.get('/messages', async (req, res) => {
+        const result = await messagesCollection.find().sort({ submittedAt: -1 }).toArray();
+        res.send(result);
+        });
+
+        // delete message
+        app.delete('/messages/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await messagesCollection.deleteOne(query);
+        res.send(result);
         });
 
         await client.db("admin").command({ ping: 1 });
